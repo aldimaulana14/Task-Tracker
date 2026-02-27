@@ -1,13 +1,27 @@
 // Data tugas
-let currentId = 2;
+let currentId = 4;
 const dataTugas = [
   {
     id: 1,
-    description: "JS Dasar",
-    status: "In progres",
+    description: "Membuat fitur add task",
+    status: "Done",
     createdAt: new Date(),
     updatedAt: null,
   },
+  {
+    id: 2,
+    description: "Membuat fitur update task",
+    status: "Todo",
+    createdAt: new Date(),
+    updatedAt: null,
+  },
+  {
+    id: 3,
+    description: "Membuat fitur hapus task",
+    status: "In progress",
+    createdAt: new Date(),
+    updatedAt: null,
+  }
 ];
 
 // import modul readline untuk input user
@@ -20,7 +34,6 @@ const rl = readline.createInterface({
 
 // function tambah task
 function addTask(inputDescription, inputStatus = "todo") {
-  ``;
   inputCreatedAt = new Date();
 
   const newTask = {
@@ -32,7 +45,7 @@ function addTask(inputDescription, inputStatus = "todo") {
   };
 
   dataTugas.push(newTask);
-  console.log("Tugas berhasil ditambahkan");
+  console.log("Tugas berhasil ditambahkan\n");
 }
 
 // input tambah deskripsi
@@ -40,7 +53,7 @@ function inputDeskripsi() {
   rl.question("Deskripsi tugas baru: ", (desk) => {
     if (desk.trim() === "") {
       console.log("Deskripsi tidak boleh kosong!");
-      return inputDeskripsi(); // ulangi pertanyaan
+      return inputDeskripsi(); 
     }
 
     addTask(desk, undefined);
@@ -50,7 +63,7 @@ function inputDeskripsi() {
 
 function inputUpdate() {
   // pilih data berdasarkan id
-  rl.question("Masukan id data yang mau diupdate: ", (tanyaId) => {
+  rl.question("\nMasukan id data yang mau diupdate: ", (tanyaId) => {
     const task = dataTugas.find((item) => item.id == tanyaId);
 
     if (!task) {
@@ -58,11 +71,13 @@ function inputUpdate() {
       return inputUpdate();
     }
     // input data desk dan status baru
-    rl.question("Deskripsi Baru: ", (deskNew) => {
-      rl.question("Status Baru: ", (statusNew) => {
+    rl.question(`Deskripsi Baru (sebelumnya: ${task.description}): `, (deskNew) => {
+      rl.question("Status Baru (Todo, In progress, Done): ", (statusNew) => {
         task.description = deskNew;
         task.status = statusNew;
         task.updatedAt = new Date();
+
+        console.log("Data berhasil diupdate\n")
 
         showMenu();
       });
@@ -74,24 +89,100 @@ function inputUpdate() {
 function UpdateTask() {
   // tampil semua data
   for (data of dataTugas) {
-    console.log(`===============
-      ID: ${data.id}
-      Deskripsi: ${data.description}
-      Status: ${data.status}`);
+console.log(`\nID: ${data.id}
+Deskripsi: ${data.description}
+Status: ${data.status}`);
   }
   inputUpdate();
 }
 
+// hapus task
+function deleteTask(){
+  // tampil semua data
+  for (data of dataTugas) {
+console.log(`\nID: ${data.id}
+Deskripsi: ${data.description}
+Status: ${data.status}`);
+  }
+
+  inputDelete()
+
+}
+
+// input delete
+function inputDelete(){
+  // pilih data berdasarkan id
+  rl.question("\nMasukan id yang mau didelete: ", (tanyaId) => {
+    const task = dataTugas.findIndex(item => item.id == tanyaId)
+
+    if(!task){
+      console.log("ID tidak ditemukan")
+      return inputDelete()
+    }
+
+    dataTugas.splice(task, 1)
+
+    console.log("Data berhasil didelete\n")
+
+    showMenu()
+  })
+}
+
 // function tampil task
 function tampilTugas() {
+  console.log("\n=== Daftar Semua Tugas ===")
   for (data of dataTugas) {
-    console.log(`===========================
-ID: ${data.id}
+    console.log(`ID: ${data.id}
 Deskripsi: ${data.description}
 Status: ${data.status}
 Created At: ${data.createdAt}
-Updated At: ${data.updatedAt}`);
+Updated At: ${data.updatedAt}\n`);
   }
+}
+
+// daftar tugas yang sudah selesai
+function daftarTugasSelesai(){
+  const tugasDone = dataTugas.filter(item => item.status == "Done")
+  console.log(`\n=== Daftar Tugas yang sudah selesai ===`)
+  for(data of tugasDone){
+    console.log(`ID: ${data.id}
+Deskripsi: ${data.description}
+Status: ${data.status}
+Created At: ${data.createdAt}
+Updated At: ${data.updatedAt}\n`)
+  }
+
+  showMenu()
+}
+
+// daftar tugas yang belum selesai
+function daftarTugasTodo(){
+  const tugasTodo = dataTugas.filter(item => item.status == "Todo")
+  console.log(`\n=== Daftar Tugas yang belum selesai ===`)
+  for(data of tugasTodo){
+    console.log(`ID: ${data.id}
+Deskripsi: ${data.description}
+Status: ${data.status}
+Created At: ${data.createdAt}
+Updated At: ${data.updatedAt}\n`)
+  }
+
+  showMenu()
+}
+
+// daftar tugas yang sedang dikerjakan
+function daftarTugasProgress(){
+  const tugasTodo = dataTugas.filter(item => item.status == "In progress")
+  console.log(`\n=== Daftar Tugas yang sedang dikerjakan ===`)
+  for(data of tugasTodo){
+    console.log(`ID: ${data.id}
+Deskripsi: ${data.description}
+Status: ${data.status}
+Created At: ${data.createdAt}
+Updated At: ${data.updatedAt}\n`)
+  }
+
+  showMenu()
 }
 
 // // tampilan awal menu
@@ -118,10 +209,26 @@ function showMenu() {
         UpdateTask();
         break;
 
+      case "3":
+        deleteTask()
+        break
+
       case "4":
         tampilTugas();
         showMenu();
         break;
+      
+      case "5":
+        daftarTugasSelesai()
+        break
+
+      case "6":
+        daftarTugasTodo()
+        break
+      
+      case "7":
+        daftarTugasProgress()
+        break
 
       case "8":
         console.log("Terimakasih");
